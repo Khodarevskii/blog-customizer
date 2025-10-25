@@ -1,17 +1,120 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
-
+import { Select } from 'src/ui/select';
+import { useState } from 'react';
+import clsx from 'clsx';
+import { RadioGroup } from 'src/ui/radio-group';
+import { Separator } from 'src/ui/separator';
 import styles from './ArticleParamsForm.module.scss';
+import {
+	fontFamilyOptions,
+	fontColors,
+	fontSizeOptions,
+	defaultArticleState,
+	backgroundColors,
+	contentWidthArr,
+	ArticleStateType,
+} from '../../constants/articleProps';
 
-export const ArticleParamsForm = () => {
+type ArticleParamsFormProps = {
+	onApply: (state: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
+	const [isOpen, setIsOpen] = useState(false);
+
+	const [selectedFontsSize, setSelectedFontsSize] = useState(
+		defaultArticleState.fontSizeOption
+	);
+	const [selectedFonts, setSelectedFonts] = useState(
+		defaultArticleState.fontFamilyOption
+	);
+	const [selectedFontsColor, setSelectedFontsColor] = useState(
+		defaultArticleState.fontColor
+	);
+	const [selectedPageBackground, setSelectedPageBackground] = useState(
+		defaultArticleState.backgroundColor
+	);
+	const [selectedContentWidth, setSelectedContentWidth] = useState(
+		defaultArticleState.contentWidth
+	);
+
+	const handleReset = () => {
+		setSelectedFontsSize(defaultArticleState.fontSizeOption);
+		setSelectedFonts(defaultArticleState.fontFamilyOption);
+		setSelectedFontsColor(defaultArticleState.fontColor);
+		setSelectedPageBackground(defaultArticleState.backgroundColor);
+		setSelectedContentWidth(defaultArticleState.contentWidth);
+	};
+
+	const handleApply = (event: React.FormEvent) => {
+		event.preventDefault();
+		onApply({
+			fontFamilyOption: selectedFonts,
+			fontSizeOption: selectedFontsSize,
+			fontColor: selectedFontsColor,
+			backgroundColor: selectedPageBackground,
+			contentWidth: selectedContentWidth,
+		});
+	};
+
 	return (
 		<>
-			<ArrowButton isOpen={false} onClick={() => {}} />
-			<aside className={styles.container}>
-				<form className={styles.form}>
+			<ArrowButton
+				isOpen={isOpen}
+				onClick={() => {
+					setIsOpen(!isOpen);
+				}}
+			/>
+			<aside
+				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				<form className={styles.form} onSubmit={handleApply}>
+					<h2 className={styles.title}>Задайте параметры</h2>
+					<div className={styles.fontsOptions}>
+						<Select
+							selected={selectedFonts}
+							onChange={setSelectedFonts}
+							options={fontFamilyOptions}
+							title='шрифт'
+						/>
+						<RadioGroup
+							selected={selectedFontsSize}
+							name='radio'
+							onChange={setSelectedFontsSize}
+							options={fontSizeOptions}
+							title='рАЗМЕР шрифта'
+						/>
+						<Select
+							selected={selectedFontsColor}
+							onChange={setSelectedFontsColor}
+							options={fontColors}
+							title='Цвет шрифта'
+						/>
+					</div>
+					<Separator />
+					<div className={styles.pageOption}>
+						<Select
+							selected={selectedPageBackground}
+							onChange={setSelectedPageBackground}
+							options={backgroundColors}
+							title='Цвет фона'
+						/>
+						<Select
+							selected={selectedContentWidth}
+							onChange={setSelectedContentWidth}
+							options={contentWidthArr}
+							title='Ширина контента'
+						/>
+					</div>
+
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' htmlType='reset' type='clear' />
-						<Button title='Применить' htmlType='submit' type='apply' />
+						<Button
+							title='Сбросить'
+							htmlType='reset'
+							type='clear'
+							onClick={handleReset}
+						/>
+						<Button title='Применить' htmlType='submit' type='apply' />{' '}
 					</div>
 				</form>
 			</aside>
