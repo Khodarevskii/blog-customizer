@@ -1,11 +1,13 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import { Select } from 'src/ui/select';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { Text } from 'src/ui/text';
 import clsx from 'clsx';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 import styles from './ArticleParamsForm.module.scss';
+import { useOutsideClickClose } from '../../ui/select/hooks/useOutsideClickClose';
 import {
 	fontFamilyOptions,
 	fontColors,
@@ -21,7 +23,7 @@ type ArticleParamsFormProps = {
 };
 
 export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	const [selectedFontsSize, setSelectedFontsSize] = useState(
 		defaultArticleState.fontSizeOption
@@ -38,6 +40,14 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	const [selectedContentWidth, setSelectedContentWidth] = useState(
 		defaultArticleState.contentWidth
 	);
+
+	const asideRef = useRef<HTMLDivElement>(null);
+
+	useOutsideClickClose({
+		isOpen: isMenuOpen,
+		rootRef: asideRef,
+		onChange: setIsMenuOpen,
+	});
 
 	const handleReset = () => {
 		setSelectedFontsSize(defaultArticleState.fontSizeOption);
@@ -61,14 +71,20 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	return (
 		<>
 			<ArrowButton
-				isOpen={isOpen}
+				isOpen={isMenuOpen}
 				onClick={() => {
-					setIsOpen(!isOpen);
+					setIsMenuOpen(!isMenuOpen);
 				}}
 			/>
 			<aside
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				ref={asideRef}
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
 				<form className={styles.form} onSubmit={handleApply}>
+					<Text as='h2' size={31} weight={800} uppercase>
+						Задайте параметры
+					</Text>
 					<h2 className={styles.title}>Задайте параметры</h2>
 					<div className={styles.fontsOptions}>
 						<Select
