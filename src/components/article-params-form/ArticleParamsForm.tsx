@@ -50,13 +50,14 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	});
 
 	const handleReset = () => {
-		setSelectedFontsSize(defaultArticleState.fontSizeOption);
-		setSelectedFonts(defaultArticleState.fontFamilyOption);
-		setSelectedFontsColor(defaultArticleState.fontColor);
-		setSelectedPageBackground(defaultArticleState.backgroundColor);
-		setSelectedContentWidth(defaultArticleState.contentWidth);
+		onApply({
+			fontFamilyOption: defaultArticleState.fontSizeOption,
+			fontSizeOption: defaultArticleState.fontFamilyOption,
+			fontColor: defaultArticleState.fontColor,
+			backgroundColor: defaultArticleState.backgroundColor,
+			contentWidth: defaultArticleState.contentWidth,
+		});
 	};
-
 	const handleApply = (event: React.FormEvent) => {
 		event.preventDefault();
 		onApply({
@@ -85,7 +86,6 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 					<Text as='h2' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
-					<h2 className={styles.title}>Задайте параметры</h2>
 					<div className={styles.fontsOptions}>
 						<Select
 							selected={selectedFonts}
